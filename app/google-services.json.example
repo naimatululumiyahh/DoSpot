@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_BUCKET"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:PROJECT_ID:android:XXXXXXXX",
+        "android_client_info": {
+          "package_name": "com.example.dospot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "YOUR_API_KEY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": "UNKNOWN"
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: ReminderAdapter
     private lateinit var preferenceHelper: PreferenceHelper
     private lateinit var firestoreRepository: FirestoreRepository
-    private lateinit var database: ReminderDatabase
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         preferenceHelper = PreferenceHelper(this)
         firestoreRepository = FirestoreRepository()
-        database = ReminderDatabase.getDatabase(this)
 
         if (!preferenceHelper.isLoggedIn()) {
             navigateToLogin()

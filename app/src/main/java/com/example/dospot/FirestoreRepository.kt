@@ -10,8 +10,10 @@ class FirestoreRepository {
 
     suspend fun addReminder(reminder: Reminder): Result<String> {
         return try {
-            val docRef = remindersCollection.add(reminder).await()
-            Result.success(docRef.id)
+            // Use the reminder.id as the document id so the id remains consistent
+            val docId = if (reminder.id.isNotEmpty()) reminder.id else remindersCollection.document().id
+            remindersCollection.document(docId).set(reminder).await()
+            Result.success(docId)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -47,6 +49,17 @@ class FirestoreRepository {
                 doc.toObject(Reminder::class.java)?.copy(id = doc.id)
             }
             Result.success(reminders)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getReminderById(reminderId: String): Result<Reminder> {
+        return try {
+            val snapshot = remindersCollection.document(reminderId).get().await()
+            val reminder = snapshot.toObject(Reminder::class.java)?.copy(id = snapshot.id)
+                ?: return Result.failure(Exception("Reminder not found"))
+            Result.success(reminder)
         } catch (e: Exception) {
             Result.failure(e)
         }

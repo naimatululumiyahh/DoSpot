@@ -43,7 +43,16 @@ class DetailReminderActivity : AppCompatActivity() {
         }
 
         binding.btnEdit.setOnClickListener {
-            Toast.makeText(this, "Fitur Edit akan segera hadir", Toast.LENGTH_SHORT).show()
+            val intent = android.content.Intent(this, EditReminderActivity::class.java).apply {
+                putExtra("REMINDER_ID", reminderId)
+                putExtra("REMINDER_TITLE", currentReminder?.title)
+                putExtra("REMINDER_DESCRIPTION", currentReminder?.description)
+                putExtra("REMINDER_LOCATION_NAME", currentReminder?.locationName)
+                putExtra("REMINDER_LATITUDE", currentReminder?.latitude)
+                putExtra("REMINDER_LONGITUDE", currentReminder?.longitude)
+                putExtra("REMINDER_TIMESTAMP", currentReminder?.timestamp)
+            }
+            startActivity(intent)
         }
 
         binding.btnDelete.setOnClickListener {
@@ -55,23 +64,27 @@ class DetailReminderActivity : AppCompatActivity() {
         showLoading(true)
 
         lifecycleScope.launch {
-            showLoading(false)
-            displayReminderData()
+            firestoreRepository.getReminderById(reminderId).fold(
+                onSuccess = { reminder ->
+                    currentReminder = reminder
+                    displayReminderData()
+                    showLoading(false)
+                },
+                onFailure = { e ->
+                    showLoading(false)
+                    Toast.makeText(
+                        this@DetailReminderActivity,
+                        "Gagal memuat detail: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
+            )
         }
     }
 
     private fun displayReminderData() {
-        currentReminder = Reminder(
-            id = reminderId,
-            userId = "",
-            title = "Rapat Tim Mingguan",
-            description = "Membahas progress kuartal ini dan rencana selanjutnya",
-            latitude = -7.7956,
-            longitude = 110.3695,
-            locationName = "Ruang Meeting 3, Lantai 5",
-            timestamp = System.currentTimeMillis()
-        )
-
+        // currentReminder is populated from Firestore in loadReminderDetail()
         binding.apply {
             tvTitle.text = currentReminder?.title
             tvSubtitle.text = currentReminder?.description
